@@ -22,14 +22,14 @@ commands:
       component: runtime
       commandLine: npm install
       # IMPORTANT: Replace '<your-repo-name>' with the exact name of your Git repository
-      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
+      workingDir: ${PROJECTS_ROOT}
       
   - id: start-app
     exec:
       component: runtime
       commandLine: npm start
       # IMPORTANT: Replace '<your-repo-name>' with the exact name of your Git repository
-      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
+      workingDir: ${PROJECTS_ROOT}
       group:
         kind: run
         isDefault: true

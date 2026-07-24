@@ -21,20 +21,18 @@ commands:
     exec:
       component: runtime
       commandLine: npm install
-      # IMPORTANT: Replace '<your-repo-name>' with the exact name of your Git repository
       workingDir: ${PROJECTS_ROOT}
       
   - id: start-app
     exec:
       component: runtime
       commandLine: npm start
-      # IMPORTANT: Replace '<your-repo-name>' with the exact name of your Git repository
       workingDir: ${PROJECTS_ROOT}
       group:
         kind: run
         isDefault: true
 
-          #events:
-          #  postStart:
-          #    # Only run short-lived, terminating scripts in postStart
-          #    - install-dependencies
+events:
+  postStart:
+    # Only run short-lived, terminating scripts in postStart
+    - install-dependencies

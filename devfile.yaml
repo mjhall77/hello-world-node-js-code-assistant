@@ -21,13 +21,13 @@ commands:
     exec:
       component: runtime
       commandLine: npm install
-      workingDir: ${PROJECTS_ROOT}
+      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
       
   - id: start-app
     exec:
       component: runtime
       commandLine: npm start
-      workingDir: ${PROJECTS_ROOT}
+      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
       group:
         kind: run
         isDefault: true

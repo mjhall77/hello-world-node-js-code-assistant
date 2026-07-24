@@ -4,7 +4,6 @@ metadata:
   version: 1.0.0
 components:
   - name: runtime
-    # The v2 schema requires the 'container' mapping here, rather than 'type: container'
     container: 
       image: registry.access.redhat.com/ubi9/nodejs-20:latest
       memoryLimit: 1G
@@ -15,7 +14,6 @@ components:
           targetPort: 8080
           exposure: public
           protocol: https
-          # Enforces TLS/HTTPS on the OpenShift Route
           secure: true 
 
 commands:
@@ -23,18 +21,20 @@ commands:
     exec:
       component: runtime
       commandLine: npm install
-      workingDir: ${PROJECTS_ROOT}
+      # IMPORTANT: Replace '<your-repo-name>' with the exact name of your Git repository
+      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
       
   - id: start-app
     exec:
       component: runtime
       commandLine: npm start
-      workingDir: ${PROJECTS_ROOT}
+      # IMPORTANT: Replace '<your-repo-name>' with the exact name of your Git repository
+      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
       group:
         kind: run
         isDefault: true
 
 events:
   postStart:
+    # Only run short-lived, terminating scripts in postStart
     - install-dependencies
-    - start-app

@@ -4,16 +4,19 @@ metadata:
   version: 1.0.0
 components:
   - name: runtime
-    type: container
-    image: registry.access.redhat.com/ubi9/nodejs-20:latest
-    memoryLimit: 1G
-    mountSources: true
-    command: ['tail', '-f', '/dev/null']
-    endpoints:
-      - name: web
-        targetPort: 8080
-        exposure: public
-        protocol: http
+    # The v2 schema requires the 'container' mapping here, rather than 'type: container'
+    container: 
+      image: registry.access.redhat.com/ubi9/nodejs-20:latest
+      memoryLimit: 1G
+      mountSources: true
+      command: ['tail', '-f', '/dev/null']
+      endpoints:
+        - name: web
+          targetPort: 8080
+          exposure: public
+          protocol: https
+          # Enforces TLS/HTTPS on the OpenShift Route
+          secure: true 
 
 commands:
   - id: install-dependencies

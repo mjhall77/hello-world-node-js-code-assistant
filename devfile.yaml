@@ -34,7 +34,7 @@ commands:
         kind: run
         isDefault: true
 
-events:
-  postStart:
-    # Only run short-lived, terminating scripts in postStart
-    - install-dependencies
+          #events:
+          #  postStart:
+          #    # Only run short-lived, terminating scripts in postStart
+          #    - install-dependencies

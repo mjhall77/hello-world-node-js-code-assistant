@@ -33,14 +33,7 @@ commands:
         kind: run
         isDefault: true
 
-  # 1. Force install the local .vsix file bypassing the registry
-  - id: install-continue-plugin
-    exec:
-      component: runtime
-      commandLine: code --install-extension .vscode/resources/continue.vsix --force
-      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
-
-  # 2. Inject the TypeScript configuration to prevent overwrites
+  # Inject the TypeScript configuration before the IDE loads
   - id: configure-continue
     exec:
       component: runtime
@@ -52,14 +45,14 @@ commands:
             {
               "title": "In-Cluster vLLM Coder",
               "provider": "openai",
-              "model": "vllm-cpu-coder",
+              "model": "vllm-cpu",
               "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
             }
           ],
           tabAutocompleteModel: {
             "title": "In-Cluster vLLM Autocomplete",
             "provider": "openai",
-            "model": "vllm-cpu-coder",
+            "model": "vllm-cpu",
             "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
           }
         };
@@ -68,7 +61,5 @@ commands:
 
 events:
   postStart:
-    # Execute everything sequentially before the workspace is marked "Running"
-    - install-continue-plugin
     - configure-continue
     - install-dependencies

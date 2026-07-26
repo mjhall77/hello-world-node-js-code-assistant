@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Auto-Start Node.js App",
+      "label": "Bootstrap Workspace",
       "type": "shell",
-      "command": "npm start",
+      "command": "code --install-extension Continue.continue --force && npm start",
       "options": {
         "cwd": "${workspaceFolder}"
       },

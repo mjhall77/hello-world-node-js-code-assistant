@@ -41,28 +41,27 @@ commands:
     exec:
       component: runtime
       commandLine: |
-        # 1. Download the extension to the shared volume, bypassing Git LFS issues
+        # 1. Download the extension to the shared volume
         curl -sSL "https://open-vsx.org/api/Continue/continue/linux-x64/download" -o /projects/continue.vsix
         
-        # 2. Inject the custom vLLM settings
+        # 2. Inject the modern YAML configuration (replaces config.json/ts)
         mkdir -p ~/.continue
-        cat << 'EOF' > ~/.continue/config.ts
-        export default {
-          models: [
-            {
-              "title": "In-Cluster vLLM Coder",
-              "provider": "openai",
-              "model": "vllm-cpu",
-              "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
-            }
-          ],
-          tabAutocompleteModel: {
-            "title": "In-Cluster vLLM Autocomplete",
-            "provider": "openai",
-            "model": "vllm-cpu",
-            "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
-          }
-        };
+        cat << 'EOF' > ~/.continue/config.yaml
+        name: "Enterprise vLLM Config"
+        version: 1.0.0
+        schema: v1
+        models:
+          - name: "In-Cluster vLLM Coder"
+            provider: openai
+            model: vllm-cpu-coder
+            apiBase: "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
+            roles: [chat, edit, apply, summarize]
+            
+          - name: "In-Cluster vLLM Autocomplete"
+            provider: openai
+            model: vllm-cpu-coder
+            apiBase: "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
+            roles: [autocomplete]
         EOF
       workingDir: ${PROJECTS_ROOT}
 

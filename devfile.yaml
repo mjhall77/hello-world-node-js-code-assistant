@@ -4,19 +4,16 @@ metadata:
   version: 1.0.0
 
 components:
-  # 1. Instructs Dev Spaces to install the Continue extension natively
-  - name: continue-ai
-    plugin:
-      id: Continue.continue
-      registryUrl: https://open-vsx.org
-
-  # 2. Your Node.js runtime (cleaner, without the curl hacks)
   - name: runtime
     container: 
       image: registry.access.redhat.com/ubi9/nodejs-20:latest
       memoryLimit: 1G
       mountSources: true
       command: ['tail', '-f', '/dev/null']
+      env:
+        # Instructs the hidden IDE container to install the downloaded .vsix
+        - name: DEFAULT_EXTENSIONS
+          value: /projects/continue.vsix
       endpoints:
         - name: web
           targetPort: 8080
@@ -25,6 +22,12 @@ components:
           secure: true 
 
 commands:
+  - id: download-continue
+    exec:
+      component: runtime
+      commandLine: curl -sSL "https://open-vsx.org/api/Continue/continue/linux-x64/download" -o /projects/continue.vsix
+      workingDir: ${PROJECTS_ROOT}
+
   - id: install-dependencies
     exec:
       component: runtime
@@ -42,4 +45,6 @@ commands:
 
 events:
   postStart:
+    # Ensure Continue is downloaded BEFORE the workspace fully boots
+    - download-continue
     - install-dependencies

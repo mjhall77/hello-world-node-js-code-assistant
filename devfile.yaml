@@ -16,6 +16,11 @@ components:
           protocol: https
           secure: true 
 
+  # Add the Continue plugin component
+  - name: continue-plugin
+    plugin:
+      id: Continue.continue
+
 commands:
   - id: install-dependencies
     exec:

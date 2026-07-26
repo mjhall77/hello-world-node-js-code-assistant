@@ -49,14 +49,14 @@ commands:
             {
               "title": "In-Cluster vLLM Coder",
               "provider": "openai",
-              "model": "vllm-cpu-coder",
+              "model": "vllm-cpu",
               "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
             }
           ],
           "tabAutocompleteModel": {
             "title": "In-Cluster vLLM Autocomplete",
             "provider": "openai",
-            "model": "vllm-cpu-coder",
+            "model": "vllm-cpu",
             "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
           }
         }

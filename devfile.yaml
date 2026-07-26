@@ -10,6 +10,10 @@ components:
       memoryLimit: 1G
       mountSources: true
       command: ['tail', '-f', '/dev/null']
+      env:
+        # Instructs the hidden IDE container to install the downloaded .vsix
+        - name: DEFAULT_EXTENSIONS
+          value: /projects/continue.vsix
       endpoints:
         - name: web
           targetPort: 8080
@@ -33,11 +37,14 @@ commands:
         kind: run
         isDefault: true
 
-  # Inject the TypeScript configuration before the IDE loads
-  - id: configure-continue
+  - id: download-and-configure-continue
     exec:
       component: runtime
       commandLine: |
+        # 1. Download the extension to the shared volume, bypassing Git LFS issues
+        curl -sSL "https://open-vsx.org/api/Continue/continue/linux-x64/download" -o /projects/continue.vsix
+        
+        # 2. Inject the custom vLLM settings
         mkdir -p ~/.continue
         cat << 'EOF' > ~/.continue/config.ts
         export default {
@@ -61,5 +68,6 @@ commands:
 
 events:
   postStart:
-    - configure-continue
+    # Execute the download, configuration, and npm install sequentially
+    - download-and-configure-continue
     - install-dependencies

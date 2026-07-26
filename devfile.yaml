@@ -3,15 +3,6 @@ metadata:
   name: nodejs-hello-world
   version: 1.0.0
 
-# In Devfile v2, IDE extensions are declared here instead of as components
-attributes:
-  .vscode/extensions.json: |
-    {
-      "recommendations": [
-        "Continue.continue"
-      ]
-    }
-
 components:
   - name: runtime
     container: 
@@ -42,34 +33,42 @@ commands:
         kind: run
         isDefault: true
 
-  # Inject Continue configuration pointing to internal vLLM service
+  # 1. Force install the local .vsix file bypassing the registry
+  - id: install-continue-plugin
+    exec:
+      component: runtime
+      commandLine: code --install-extension .vscode/resources/continue.vsix --force
+      workingDir: ${PROJECTS_ROOT}/hello-world-node-js-code-assistant
+
+  # 2. Inject the TypeScript configuration to prevent overwrites
   - id: configure-continue
     exec:
       component: runtime
       commandLine: |
         mkdir -p ~/.continue
-        cat << 'EOF' > ~/.continue/config.json
-        {
-          "models": [
+        cat << 'EOF' > ~/.continue/config.ts
+        export default {
+          models: [
             {
               "title": "In-Cluster vLLM Coder",
               "provider": "openai",
-              "model": "vllm-cpu",
+              "model": "vllm-cpu-coder",
               "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
             }
           ],
-          "tabAutocompleteModel": {
+          tabAutocompleteModel: {
             "title": "In-Cluster vLLM Autocomplete",
             "provider": "openai",
-            "model": "vllm-cpu",
+            "model": "vllm-cpu-coder",
             "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
           }
-        }
+        };
         EOF
       workingDir: ${PROJECTS_ROOT}
 
 events:
   postStart:
-    # Chain the configuration and dependencies installation
+    # Execute everything sequentially before the workspace is marked "Running"
+    - install-continue-plugin
     - configure-continue
     - install-dependencies

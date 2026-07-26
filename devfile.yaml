@@ -37,7 +37,34 @@ commands:
         kind: run
         isDefault: true
 
+  # Inject Continue configuration pointing to internal vLLM service
+  - id: configure-continue
+    exec:
+      component: runtime
+      commandLine: |
+        mkdir -p ~/.continue
+        cat << 'EOF' > ~/.continue/config.json
+        {
+          "models": [
+            {
+              "title": "In-Cluster vLLM Coder",
+              "provider": "openai",
+              "model": "vllm-cpu-coder",
+              "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
+            }
+          ],
+          "tabAutocompleteModel": {
+            "title": "In-Cluster vLLM Autocomplete",
+            "provider": "openai",
+            "model": "vllm-cpu-coder",
+            "apiBase": "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
+          }
+        }
+        EOF
+      workingDir: ${PROJECTS_ROOT}
+
 events:
   postStart:
     # Only run short-lived, terminating scripts in postStart
+    - configure-continue
     - install-dependencies

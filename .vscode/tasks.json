@@ -2,9 +2,21 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Configure Continue AI",
+      "type": "shell",
+      "command": "mkdir -p ~/.continue && cat << 'EOF' > ~/.continue/config.json\n{\n  \"models\": [\n    {\n      \"title\": \"In-Cluster vLLM Coder\",\n      \"provider\": \"openai\",\n      \"model\": \"vllm-cpu\",\n      \"apiBase\": \"http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1\"\n    }\n  ],\n  \"tabAutocompleteModel\": {\n    \"title\": \"In-Cluster vLLM Autocomplete\",\n    \"provider\": \"openai\",\n    \"model\": \"vllm-cpu\",\n    \"apiBase\": \"http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1\"\n  },\n  \"allowAnonymousTelemetry\": false\n}\nEOF",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
       "label": "Auto-Start Node.js App",
       "type": "shell",
       "command": "npm start",
+      "dependsOn": ["Configure Continue AI"],
       "options": {
         "cwd": "${workspaceFolder}"
       },

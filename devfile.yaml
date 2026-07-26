@@ -4,16 +4,19 @@ metadata:
   version: 1.0.0
 
 components:
+  # 1. Instructs Dev Spaces to install the Continue extension natively
+  - name: continue-ai
+    plugin:
+      id: Continue.continue
+      registryUrl: https://open-vsx.org
+
+  # 2. Your Node.js runtime (cleaner, without the curl hacks)
   - name: runtime
     container: 
       image: registry.access.redhat.com/ubi9/nodejs-20:latest
       memoryLimit: 1G
       mountSources: true
       command: ['tail', '-f', '/dev/null']
-      env:
-        # Instructs the hidden IDE container to install the downloaded .vsix
-        - name: DEFAULT_EXTENSIONS
-          value: /projects/continue.vsix
       endpoints:
         - name: web
           targetPort: 8080
@@ -37,36 +40,6 @@ commands:
         kind: run
         isDefault: true
 
-  - id: download-and-configure-continue
-    exec:
-      component: runtime
-      commandLine: |
-        # 1. Download the extension to the shared volume
-        curl -sSL "https://open-vsx.org/api/Continue/continue/linux-x64/download" -o /projects/continue.vsix
-        
-        # 2. Inject the modern YAML configuration (replaces config.json/ts)
-        mkdir -p ~/.continue
-        cat << 'EOF' > ~/.continue/config.yaml
-        name: "Enterprise vLLM Config"
-        version: 1.0.0
-        schema: v1
-        models:
-          - name: "In-Cluster vLLM Coder"
-            provider: openai
-            model: vllm-cpu-coder
-            apiBase: "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
-            roles: [chat, edit, apply, summarize]
-            
-          - name: "In-Cluster vLLM Autocomplete"
-            provider: openai
-            model: vllm-cpu-coder
-            apiBase: "http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1"
-            roles: [autocomplete]
-        EOF
-      workingDir: ${PROJECTS_ROOT}
-
 events:
   postStart:
-    # Execute the download, configuration, and npm install sequentially
-    - download-and-configure-continue
     - install-dependencies

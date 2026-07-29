@@ -4,7 +4,7 @@
     {
       "label": "Configure Continue AI",
       "type": "shell",
-      "command": "mkdir -p ~/.continue && cat << 'EOF' > ~/.continue/config.yaml\nname: Dev Spaces vLLM Setup\nversion: 1.0.0\nschema: v1\nmodels:\n  - name: In-Cluster vLLM Coder\n    provider: openai\n    model: \"/models/granite-3b-code-instruct/\"\n    apiBase: http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1\n    roles: [chat, edit, apply]\n    contextLength: 2048\n    defaultCompletionOptions:\n      maxTokens: 1024\n  - name: In-Cluster vLLM Autocomplete\n    provider: openai\n    model: \"/models/granite-3b-code-instruct/\"\n    apiBase: http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1\n    roles: [autocomplete]\n    contextLength: 2048\n    defaultCompletionOptions:\n      maxTokens: 512\nEOF",
+      "command": "mkdir -p ~/.continue && cat << 'EOF' > ~/.continue/config.yaml\nname: Dev Spaces vLLM Setup\nversion: 1.0.0\nschema: v1\nmodels:\n  - name: In-Cluster vLLM Coder\n    provider: openai\n    model: \"/models/granite-3b-code-instruct/\"\n    apiBase: http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1\n    roles: [chat, edit, apply]\n    contextLength: 2048\n    defaultCompletionOptions:\n      maxTokens: 1024\ntabAutocompleteModel:\n  name: In-Cluster vLLM Autocomplete\n  provider: openai\n  model: \"/models/granite-3b-code-instruct/\"\n  apiBase: http://vllm-service.vllm-cpu.svc.cluster.local:8000/v1\ntabAutocompleteOptions:\n  debounceDelay: 1500\n  maxPromptTokens: 512\n  useCache: true\nEOF",
       "runOptions": {
         "runOn": "folderOpen"
       },
